@@ -9,9 +9,9 @@
 	  #main{
 		 width: 500px;
 		 height: 300px;
-		 margin-left: 23%;
+		 margin-left: 25%;
 		 margin-top: 10%;
-		 border: solid 3px #EBF815;
+		 border: solid 3px #B0C50F;
 		  
 	  }
 	  #ti{
@@ -57,12 +57,14 @@
 		  width: 808px;
 		  height: 600px;
 		  font-family: "nexa-rust";
-		  
 		  color: white;
 		  text-shadow: 0px 0px 20px #00FF00;
 		  -webkit-user-select:none;
 		 
 	  }
+      .frame h2:hover{
+	color: #D17B0E;
+      }
 	  .frame button{
 		  font-family: "nexa-rust";
 		  width: 400px;
@@ -74,22 +76,23 @@
 		       4px 4px 0px rgba(160,160,220,1),
 			  5px 5px 0px rgba(0,0,0,1),
 			  8px 8px 20px rgba(0,0,0,0.5);
-		  font-size: 24px;
+		  font-size: 30px;
 		  color: #EDB12F;
 		  margin: 0px;
 		  padding: 10px;
 		  background: none;
-		  border: 1px solid #dedede;
+		  border: 2px solid #dedede;
 		  border-top-left-radius: 13px;
 		  border-bottom-right-radius: 13px;
 		  display:  inline-block;
 		  text-decoration: none;
-		  border-color: #8dc5da #76b7cf #63abc7;
+		  border-color: #B0C50F;
 		  box-shadow: 13px 11px 13px rgba(222,222,220,0.5),-13px -11px 13px rgba(232,232,232,0.5);
 		  
 	  }
 	  .frame button:hover{
 		  border-radius: 13px;
+		  background: #D4D4D4;
 		  text-shadow: 
 			  1px 1px 0px rgba(230,230,230,1),
 		      2px 2px 0px rgba(200,200,200,1),
@@ -100,19 +103,13 @@
 		  color: #7BB30D;	
 		  
 	  }
-	  .frame button:active{
-		  text-shadow: 0px 0px 20px #1FE5DC;
-		 
-	  }
+
 	  body{
 		  margin: 0 auto;
-
-		  
 		  text-align: center;
 		  background-image: url(esq.jpg);
 		  background-repeat: no-repeat;
-		  background-size: cover;
-		  
+		  background-size: cover; 
 	  }
 
 	  

@@ -21,7 +21,7 @@
         </button>
     </div>
 </div> 
- 
+  <script src="preloadjs-0.1.0.min.js"></script>
   <script> 
 	  // JavaScript Document
 //crear variables de la nave
@@ -44,7 +44,9 @@
 		var enemigos = [];
   
 		//definir variable de la imagen
-		var fondo;
+	    
+		var fondo,imgNave,imgEnemigo,imgDisparo,imgDisparoEnemigo;
+	    var imagenes = ['monster.png','nave.png','enemyLaser.png','laser.png','lo.png'];
 		//creando menu inicio
 	    function Game(gameDiv)
 	            {
@@ -213,7 +215,7 @@
 				};
 		     }
 			if(juego.estado == 'iniciando')
-			{
+			{  
 				for(var i=0;i<10;i++){
 					enemigos.push({
 						x: 10 + (i*10),
@@ -223,10 +225,11 @@
 						estado: 'vivo',
 						contador: 0
 					});
+					}
+				
 				}
 				juego.estado = 'jugando';
-			}
-			for(var i in  enemigos)
+		 for(var i in  enemigos)
 			{
 				var enemigo = enemigos[i];
 				if(!enemigo) continue;
@@ -247,7 +250,7 @@
 					enemigo.estado = 'muerto';
 					enemigo.contador = 0;
 				}
-			  }
+			  }			
 			}
 			
 			enemigos = enemigos.filter(function(enemigo){
@@ -258,7 +261,9 @@
 						  return false;
 					  }
 						   });
-		}
+		
+			}
+			
 	  
 	function moverDisparos()
 	    {
