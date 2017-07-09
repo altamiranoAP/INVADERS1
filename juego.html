@@ -32,8 +32,8 @@
 		var nave = {
 			x:100,
 			y:canvas.height-20,
-			width: 10,
-			height: 5
+			width: 15,
+			height: 18
 			};
 		var juego = { estado: 'iniciando'};
 		var teclado = {};
@@ -47,6 +47,7 @@
 	    
 		var fondo,imgNave,imgEnemigo,imgDisparo,imgDisparoEnemigo;
 	    var imagenes = ['monster.png','nave.png','enemyLaser.png','laser.png','lo.png'];
+	    var preloader;
 		//creando menu inicio
 	    function Game(gameDiv)
 	            {
@@ -89,33 +90,51 @@
 			 var game;
 		function loadMedia()
 	    {
-			fondo = new Image();
-			fondo.src = "lo.png";	
-			fondo.onload = function(){
-			 var intervalo = window.setInterval(frameLoop,1000/55);
+			preloader = new PreloadJS();
+			preloader.onProgress = progresoCarga;
+			cargar();
+		}
+	    function cargar()
+	    {
+			while(imagenes.length > 0){
+            var imagen = imagenes.shift();
+              preloader.loadFile(imagen);
 			}
-
+		}
+	    function progresoCarga(){
+		  console.log(parseInt(preloader.progress * 100)+"%");
+		  if(preloader.progress == 1){
+			var interval = window.setInterval(frameLoop,1000/30);
+			fondo = new Image();
+			fondo.src = 'lo.png';
+			imgNave = new Image();
+			imgNave.src = 'nave.png';
+			imgEnemigo = new Image();
+			imgEnemigo.src = 'monster.png';
+			imgDisparo = new Image();
+			imgDisparo.src = 'laser.png';
+			imgDisparoEnemigo = new Image();
+			imgDisparoEnemigo.src = 'enemyLaser.png';
+			  }
 		}
 		function dibujarFondo()
 	    {
-			ctx.save();
+			
 			ctx.drawImage(fondo,0,0,300,150);
-			ctx.restore();
+			
 		}
 		function dibujarNave()
 	    {
 			ctx.save();
-			ctx.fillStyle = "white";
-			ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
+			ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
 			ctx.restore();
 		}
 		function dibujarDisparos()
 	    {
 			ctx.save();
-			ctx.fillStyle = "yellow";
 			for(var i in disparos){
 				var disparo = disparos[i];
-				ctx.fillRect(disparo.x,disparo.y,disparo.width,disparo.height);
+				ctx.drawImage(imgDisparo,disparo.x,disparo.y,disparo.width,disparo.height);
 			}
 			ctx.restore();
 		} 
@@ -125,8 +144,7 @@
 				 {
 					 var disparo = disparosenemigos[i];
 					 ctx.save();
-					 ctx.fillStyle = "yellow";
-					 ctx.fillRect(disparo.x,disparo.y,disparo.width,disparo.height);
+					 ctx.drawImage(imgDisparoEnemigo,disparo.x,disparo.y,disparo.width,disparo.height);
 					 ctx.restore();
 				 }
 		}
@@ -147,7 +165,7 @@
 				var enemigo = enemigos[i];
 				if(enemigo.estado == 'vivo'){ctx.fillStyle = "red";}
 				if(enemigo.estado == 'muerto'){ctx.fillStyle= "blue";}
-				ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+				ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
 				
 			}
 			ctx.restore();
@@ -209,8 +227,8 @@
 			    return {
 				   x: enemigo.x,
 				   y: enemigo.y,
-				   width: 5,
-				   height: 5,
+				   width: 10,
+				   height: 10,
 				   contador: 0
 				};
 		     }
@@ -218,10 +236,10 @@
 			{  
 				for(var i=0;i<10;i++){
 					enemigos.push({
-						x: 10 + (i*10),
+						x: 2 + (i*10),
 						y: 10,
-						height:5,
-						width:5,
+						height:10,
+						width:10,
 						estado: 'vivo',
 						contador: 0
 					});
@@ -280,8 +298,8 @@
 			disparos.push({
 				x: nave.x + 2,
 				y: nave.y - 2,
-				width: 2,
-				height: 2
+				width: 5,
+				height: 5
 			});
 		}
 	function hit(a,b)
