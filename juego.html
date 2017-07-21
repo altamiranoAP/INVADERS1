@@ -28,6 +28,7 @@
         var canvas = document.getElementById('ncanvas');
 		var ctx = canvas.getContext("2d");
 	    var fondo;
+	    
 		//crear dimensiones de la nave
 		var nave = {
 			x:100,
@@ -36,6 +37,12 @@
 			height: 20
 			};
 		var juego = { estado: 'iniciando'};
+	    //crear texto
+	    var textRespuesta = {
+			contador: -1,
+			titulo: '',
+			subtitulo: ''
+		};
 		var teclado = {};
 		//array para los disparos
 		var disparos = [];
@@ -214,24 +221,25 @@
 					teclado.fire = true;
 				}
 
-			}else{teclado.fire = false;}
+			}else teclado.fire = false; 
+			
 			if(nave.estado == 'hit'){
 				  nave.contador++;
 				  if(nave.contador >= 20){
-					nave.contador = 0,
+					nave.contador = 0;
 					nave.estado = 'muerto';
 					juego.estado = 'perdido';
-					textoRespuesta.titulo = 'Game Over';
-					textoRespuesta.subtitulo = 'Presiona la tecla R para continuar';
-					textoRespuesta.contador = 0;
+					textRespuesta.titulo = 'Game Over';
+					textRespuesta.subtitulo = 'Presiona la tecla R para continuar';
+					textRespuesta.contador = 0;
 
 				  }
 				}
 
 		}
 	function dibujaTexto(){
-		  if(textoRespuesta.contador == -1) return;
-		  var alpha = textoRespuesta.contador/50.0;
+		  if(textRespuesta.contador == -1) return;
+		  var alpha = textRespuesta.contador/50.0;
 		  if(alpha>1){
 			for(var i in enemigos){
 			  delete enemigos[i];
@@ -242,32 +250,32 @@
 		  if(juego.estado == 'perdido'){
 			ctx.fillStyle = 'white';
 			ctx.font = 'Bold 40pt Arial';
-			ctx.fillText(textoRespuesta.titulo, 140,200);
+			ctx.fillText(textRespuesta.titulo, 40,50);
 			ctx.font = '14pt Arial';
-			ctx.fillText(textoRespuesta.subtitulo, 190,250);
+			ctx.fillText(textRespuesta.subtitulo, 50,50);
 		  }
 		  if(juego.estado == 'victoria'){
 			ctx.fillStyle = 'white';
 			ctx.font = 'Bold 40pt Arial';
-			ctx.fillText(textoRespuesta.titulo, 140,200);
+			ctx.fillText(textRespuesta.titulo, 40,50);
 			ctx.font = '14pt Arial';
-			ctx.fillText(textoRespuesta.subtitulo, 190,250);
+			ctx.fillText(textRespuesta.subtitulo, 90,50);
 		  }
 		}
 	function actualizarEstadoJuego(){
-		  if(juego.estado == 'jugando' && enemigos.length == 0){
+		  if(juego.estado == 'iniciando' && enemigos.length == 0){
 				juego.estado = 'victoria';
-				textoRespuesta.titulo = 'Derrotaste a los enemigos';
-				textoRespuesta.subtitulo = 'Presiona la tecla R para reiniciar';
-				textoRespuesta.contador = 0;
+				textRespuesta.titulo = 'Derrotaste a los enemigos';
+				textRespuesta.subtitulo = 'Presiona la tecla R para reiniciar';
+				textRespuesta.contador = 0;
 		  }
-		  if(textoRespuesta.contador >= 0){
-			  textoRespuesta.contador++;
+		  if(textRespuesta.contador >= 0){
+			  textRespuesta.contador++;
 		  }
 		  if((juego.estado == 'perdido' || juego.estado == 'victoria') && teclado[82]){
-				 juego.estado = 'iniciando';
+				 juego.estado = 'jugando';
 				 nave.estado = 'vivo';
-				 textoRespuesta.contador = -1;
+				 textRespuesta.contador = -1;
 		  }
 		}
 	function actualizaEnemigos()
@@ -345,7 +353,7 @@
 	function fire()
 	    {
 			disparos.push({
-				x: nave.x + 2,
+				x: nave.x + 5,
 				y: nave.y - 2,
 				width: 5,
 				height: 5
@@ -384,7 +392,7 @@
 				   {
 				   enemigo.estado = 'hit';
 				   enemigo.contador = 0;
-				   console.log('hobo contacto');
+				   console.log('hubo contacto');
 				   }
 		    }
 	     }
@@ -400,16 +408,16 @@
 	}
 	function frameLoop()
 	    {
-			moverNave();
 			actualizarEstadoJuego();
+			moverNave();
 			actualizaEnemigos();
 			moverDisparos();
 			moverdisparosenemigos();
 			dibujarFondo();
 			dibujarEnemigos();
+			dibujaTexto();
 			dibujarDisparos();
 			dibujarNave();
-			dibujaTexto();
 			dibujardisparosenemigos();
 			verificarcontacto();
 			colision();
