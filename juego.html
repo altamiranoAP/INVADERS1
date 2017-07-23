@@ -223,7 +223,7 @@
 
 			}else teclado.fire = false; 
 			
-			if(nave.estado == 'hit'){
+			if(nave.estado == 'golpeado')
 				  nave.contador++;
 				  if(nave.contador >= 20){
 					nave.contador = 0;
@@ -239,10 +239,23 @@
 		}
 	function dibujaTexto(){
 		  if(textRespuesta.contador == -1) return;
-		  var alpha = textRespuesta.contador/50.0;
+		  var alpha = textRespuesta.contador/10.0;
 		  if(alpha>1){
 			for(var i in enemigos){
 			  delete enemigos[i];
+			}
+			
+			for(var j in disparosEnemigos)
+			{
+
+			delete disparosEnemigos[j];
+
+			}
+			for(var h in disparos)
+			{
+
+			delete disparos[h];
+
 			}
 		  }
 		  ctx.save();
@@ -263,7 +276,7 @@
 		  }
 		}
 	function actualizarEstadoJuego(){
-		  if(juego.estado == 'iniciando' && enemigos.length == 0){
+		  if(juego.estado == 'jugando' && enemigos.length == 0){
 				juego.estado = 'victoria';
 				textRespuesta.titulo = 'Derrotaste a los enemigos';
 				textRespuesta.subtitulo = 'Presiona la tecla R para reiniciar';
@@ -319,7 +332,7 @@
 					}
 				}
 							   
-				if(enemigo && enemigo.estado == 'hit'){
+				if(enemigo && enemigo.estado == 'golpeado'){
 				enemigo.contador++;
 				if(enemigo.contador >= 10){
 					enemigo.estado = 'muerto';
@@ -359,26 +372,26 @@
 				height: 5
 			});
 		}
-	function hit(a,b)
+	function Colision(a,b)
 	    {
-		var hit = false;
+		var colision = false;
 		if(b.x + b.width >= a.x && b.x < a.x + a.width){
 			if(b.y + b.height >= a.y && b.y < a.y + a.height){
-				hit = true;
+				colision = true;
 			}
 			
 		}
 		if(b.x <= a.x && b.x + b.width >= a.x + a.width){
 			if(b.y <= a.y && b.y + b.height >= a.y + a.height){
-				hit = true;
+				colision = true;
 			}
 		}
 		if(a.x <= b.x && a.x + a.width >= b.x + b.width){
 			if(a.y <= b.y && a.y + a.height >= b.y + b.height){
-				hit = true;
+				colision = true;
 			}
 		}
-		return hit;
+		return colision;
 	    }
 	function verificarcontacto()
 	  {
@@ -388,14 +401,24 @@
 			for(var j in enemigos)
 			{
 				var enemigo = enemigos[j];
-				if(hit(disparo,enemigo))
+				if(Colision(disparo,enemigo))
 				   {
-				   enemigo.estado = 'hit';
+				   enemigo.estado = 'golpeado';
 				   enemigo.contador = 0;
-				   console.log('hubo contacto');
+				   console.log('colision');
 				   }
 		    }
 	     }
+		  if(nave.estado == 'golpeado' || nave.estado == 'muerto'){return;}
+			  
+		  for(var i disparosenemigos){
+			  
+			  var disparo = disparosenemigos[i];
+			  if(Colision(disparo,nave)){
+				  nave.estado = 'golpeado';
+				  console.log('golpeado');
+			  }
+		  }
 	  }
         
 
@@ -420,7 +443,7 @@
 			dibujarNave();
 			dibujardisparosenemigos();
 			verificarcontacto();
-			colision();
+			
 			
 		 }
 		//Ejecucion de funciones
