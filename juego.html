@@ -38,11 +38,6 @@
 			};
 		var juego = { estado: 'iniciando'};
 	    //crear texto
-	    var textRespuesta = {
-			contador: -1,
-			titulo: '',
-			subtitulo: ''
-		};
 		var teclado = {};
 		//array para los disparos
 		var disparos = [];
@@ -159,7 +154,7 @@
 			for(var i in disparosenemigos)
 				{
 					var disparo = disparosenemigos[i];
-					disparo.y += 0.1;
+					disparo.y += 2;
 				}
 			disparosenemigos = disparosenemigos.filter(function(disparo){
 				return disparo.y < canvas.height;
@@ -177,7 +172,8 @@
 			}
 			ctx.restore();
 		}
-		function manejodeTeclados()
+		
+	    function manejodeTeclados()
 	    {
 			agregarEvento(document,"keydown",function(e){
 				teclado[e.keyCode] = true;
@@ -221,76 +217,13 @@
 					teclado.fire = true;
 				}
 
-			}else teclado.fire = false; 
-			
-			if(nave.estado == 'golpeado')
-				  nave.contador++;
-				  if(nave.contador >= 20){
-					nave.contador = 0;
-					nave.estado = 'muerto';
-					juego.estado = 'perdido';
-					textRespuesta.titulo = 'Game Over';
-					textRespuesta.subtitulo = 'Presiona la tecla R para continuar';
-					textRespuesta.contador = 0;
-
-				  }
-				}
+			}else
+			{ 
+				teclado.fire = false;
+			}
 
 		}
-	function dibujaTexto(){
-		  if(textRespuesta.contador == -1) return;
-		  var alpha = textRespuesta.contador/10.0;
-		  if(alpha>1){
-			for(var i in enemigos){
-			  delete enemigos[i];
-			}
-			
-			for(var j in disparosEnemigos)
-			{
-
-			delete disparosEnemigos[j];
-
-			}
-			for(var h in disparos)
-			{
-
-			delete disparos[h];
-
-			}
-		  }
-		  ctx.save();
-		  ctx.globalAlpha = alpha;
-		  if(juego.estado == 'perdido'){
-			ctx.fillStyle = 'white';
-			ctx.font = 'Bold 40pt Arial';
-			ctx.fillText(textRespuesta.titulo, 40,50);
-			ctx.font = '14pt Arial';
-			ctx.fillText(textRespuesta.subtitulo, 50,50);
-		  }
-		  if(juego.estado == 'victoria'){
-			ctx.fillStyle = 'white';
-			ctx.font = 'Bold 40pt Arial';
-			ctx.fillText(textRespuesta.titulo, 40,50);
-			ctx.font = '14pt Arial';
-			ctx.fillText(textRespuesta.subtitulo, 90,50);
-		  }
-		}
-	function actualizarEstadoJuego(){
-		  if(juego.estado == 'jugando' && enemigos.length == 0){
-				juego.estado = 'victoria';
-				textRespuesta.titulo = 'Derrotaste a los enemigos';
-				textRespuesta.subtitulo = 'Presiona la tecla R para reiniciar';
-				textRespuesta.contador = 0;
-		  }
-		  if(textRespuesta.contador >= 0){
-			  textRespuesta.contador++;
-		  }
-		  if((juego.estado == 'perdido' || juego.estado == 'victoria') && teclado[82]){
-				 juego.estado = 'jugando';
-				 nave.estado = 'vivo';
-				 textRespuesta.contador = -1;
-		  }
-		}
+	
 	function actualizaEnemigos()
 	    {   function agregardisparosenemigos(enemigo)
 		     {
@@ -326,31 +259,30 @@
 				
 					enemigo.x += Math.sin(enemigo.contador * Math.PI /100)*3;
 
-					
-					if(aleatorio(0,enemigos.length * 100) == 4){
+					if(aleatorio(0,enemigos.length * 70)==1){
 						disparosenemigos.push(agregardisparosenemigos(enemigo));
 					}
+					
 				}
-							   
-				if(enemigo && enemigo.estado == 'golpeado'){
-				enemigo.contador++;
-				if(enemigo.contador >= 10){
-					enemigo.estado = 'muerto';
-					enemigo.contador = 0;
+				if(enemigo && enemigo.estado == 'hit'){
+					enemigo.contador++;
+					if(enemigo.contador >=20){
+						enemigo.estado = 'muerto';
+						enemigo.contador = 0;
+					}
 				}
-			  }			
+							   		
 			}
-			
 			enemigos = enemigos.filter(function(enemigo){
-		       if(enemigo && enemigo.estado != 'muerto'){
-			  		return true;
-		  			}
-					  else {
-						  return false;
-					  }
-						   });
+				if(enemigo && enemigo.estado != 'muerto'){
+					return true;
+				}else 
+					{
+						return false;
+					}
+			});
 		
-			}
+		}
 			
 	  
 	function moverDisparos()
@@ -372,26 +304,26 @@
 				height: 5
 			});
 		}
-	function Colision(a,b)
+	function hit(a,b)
 	    {
-		var colision = false;
+		var hit = false;
 		if(b.x + b.width >= a.x && b.x < a.x + a.width){
 			if(b.y + b.height >= a.y && b.y < a.y + a.height){
-				colision = true;
+				hit = true;
 			}
 			
 		}
 		if(b.x <= a.x && b.x + b.width >= a.x + a.width){
 			if(b.y <= a.y && b.y + b.height >= a.y + a.height){
-				colision = true;
+				hit = true;
 			}
 		}
 		if(a.x <= b.x && a.x + a.width >= b.x + b.width){
 			if(a.y <= b.y && a.y + a.height >= b.y + b.height){
-				colision = true;
+				hit = true;
 			}
 		}
-		return colision;
+		return hit;
 	    }
 	function verificarcontacto()
 	  {
@@ -401,24 +333,15 @@
 			for(var j in enemigos)
 			{
 				var enemigo = enemigos[j];
-				if(Colision(disparo,enemigo))
+				if(hit(disparo,enemigo))
 				   {
-				   enemigo.estado = 'golpeado';
+				   enemigo.estado = 'hit';
 				   enemigo.contador = 0;
-				   console.log('colision');
+				   console.log('hubo contacto');
 				   }
 		    }
 	     }
-		  if(nave.estado == 'golpeado' || nave.estado == 'muerto'){return;}
-			  
-		  for(var i disparosenemigos){
-			  
-			  var disparo = disparosenemigos[i];
-			  if(Colision(disparo,nave)){
-				  nave.estado = 'golpeado';
-				  console.log('golpeado');
-			  }
-		  }
+		  
 	  }
         
 
@@ -431,14 +354,13 @@
 	}
 	function frameLoop()
 	    {
-			actualizarEstadoJuego();
+			
 			moverNave();
 			actualizaEnemigos();
 			moverDisparos();
 			moverdisparosenemigos();
 			dibujarFondo();
 			dibujarEnemigos();
-			dibujaTexto();
 			dibujarDisparos();
 			dibujarNave();
 			dibujardisparosenemigos();
