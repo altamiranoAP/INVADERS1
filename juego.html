@@ -257,9 +257,9 @@
 			    if(enemigo && enemigo.estado == 'vivo'){
 					enemigo.contador++;
 				
-					enemigo.x += Math.sin(enemigo.contador * Math.PI /100)*3;
+					enemigo.x += Math.sin(enemigo.contador * Math.PI /170)*1.8;
 
-					if(aleatorio(0,enemigos.length * 70)==1){
+					if(aleatorio(0,enemigos.length * 40)==3){
 						disparosenemigos.push(agregardisparosenemigos(enemigo));
 					}
 					
@@ -337,11 +337,17 @@
 				   {
 				   enemigo.estado = 'hit';
 				   enemigo.contador = 0;
-				   console.log('hubo contacto');
 				   }
 		    }
 	     }
-		  
+		 
+		  for(var i in disparosenemigos){
+			  var disparo = disparosenemigos[i];
+			  if(hit(disparo,nave)){
+				  nave.estado = 'hit';
+				  console.log('contacto');
+			  }
+		  }
 	  }
         
 
