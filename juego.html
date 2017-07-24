@@ -34,7 +34,8 @@
 			x:100,
 			y:canvas.height-20,
 			width: 25,
-			height: 20
+			height: 20,
+			contador: 0
 			};
 		var juego = { estado: 'iniciando'};
 	    //crear texto
@@ -44,7 +45,12 @@
 	    var disparosenemigos = [];
 		//arreglo para almacenar enemigos
 		var enemigos = [];
-  
+        //dibujar texto
+	    var textorespuesta = {
+			contador: -1,
+			titulo: '',
+			subtitulo: ''
+		};
 		//definir variable de la imagen
 	    
 		var fondo,imgNave,imgEnemigo,imgDisparo,imgDisparoEnemigo;
@@ -217,9 +223,19 @@
 					teclado.fire = true;
 				}
 
-			}else
-			{ 
-				teclado.fire = false;
+			}
+			else { teclado.fire = false;
+				 }
+			if(nave.estado == 'hit'){
+				nave.contador++;
+				if(nave.contador >= 20){
+					nave.contador = 0;
+					nave.estado = 'muerto';
+					juego.estado = 'perdido';
+					textorespuesta.titulo = 'Game Over';
+					textorespuesta.subtitulo = 'PRECIONE INTRO PARA REINICIAR';
+					textorespuesta.contador = 0;
+				}
 			}
 
 		}
@@ -304,6 +320,45 @@
 				height: 5
 			});
 		}
+	function dibujarTexto()
+	  {
+		  if(textorespuesta.contador == -1)return;
+		  var alpha = textorespuesta.contador/50.0;
+		  if(alpha>1){
+			  for(var i in enemigos){
+				  delete enemigos[i];
+			  }
+		  }
+		  ctx.save();
+		  ctx.globalAlpha = alpha;
+		  if(juego.estado == 'perdido'){
+			  ctx.fillStyle = 'white';
+			  ctx.font = 'Bold 40pt Arial';
+			  ctx.fillText(textorespuesta.titulo,100,140);
+			  ctx.font = '14pt Arial';
+			  ctx.fillText(textorespuesta.subtitulo,150,200);
+		  }
+		  if(juego.estado == 'victoria'){
+			  ctx.fillStyle = 'yellow';
+			  ctx.font = 'Bold 40pt Arial';
+			  ctx.fillText(textorespuesta.titulo,100,140);
+			  ctx.font = '14pt Arial';
+			  ctx.fillText(textorespuesta.subtitulo,150,200);
+		  }
+		  ctx.restore();
+	  }
+	function actualizarestadojuego()
+	  {
+		if(juego.estado == 'jugando' && enemigos.length == 0){
+			juego.estado = 'victoria';
+			textorespuesta.titulo = 'ENEMIGOS DESTRUIDOS';
+			textorespuesta.subtitulo = 'PRECIONA INTRO PARA REINICIAR';
+			textorespuesta.contador = 0;
+		} 
+		if(textorespuesta.contador >= 0){
+			textorespuesta.contador++; 
+		}
+	  }
 	function hit(a,b)
 	    {
 		var hit = false;
@@ -340,7 +395,7 @@
 				   }
 		    }
 	     }
-		 
+		 if(nave.estado == 'hit'|| nave.estado == 'muerto')return;
 		  for(var i in disparosenemigos){
 			  var disparo = disparosenemigos[i];
 			  if(hit(disparo,nave)){
@@ -363,6 +418,7 @@
 			
 			moverNave();
 			actualizaEnemigos();
+			actualizarestadojuego();
 			moverDisparos();
 			moverdisparosenemigos();
 			dibujarFondo();
@@ -370,6 +426,7 @@
 			dibujarDisparos();
 			dibujarNave();
 			dibujardisparosenemigos();
+			dibujarTexto();
 			verificarcontacto();
 			
 			
