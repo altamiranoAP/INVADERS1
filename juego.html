@@ -5,19 +5,20 @@
  
 <title>juegomatematico</title>
 <link type="text/css" rel="stylesheet" href="diseño.css">
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
 
 </head>  
 <body>
-<div id="game">
+<div  id="game">
 	<div id="main" class="frame">
 	
- 	    <h2 id="ti">CHIKEN INVADERS</h2>
+ 	    <h2 id="ti" >CHIKEN INVADERS</h2>
 		<button id="jugar" onClick="game.setFrameVisible('canvas'); game.setFrameHidden('main');">INICIAR JUEGO</button>
     </div>
     <div id="canvas" class="frame hidden"> 
         <canvas id="ncanvas"></canvas>
         <button onClick="game.setFrameVisible('main');game.setFrameHidden('canvas');">
-        	Volver al menu
+        	MENU
         </button>
     </div>
 </div> 
@@ -55,6 +56,7 @@
 	    
 		var fondo,imgNave,imgEnemigo,imgDisparo,imgDisparoEnemigo;
 	    var imagenes = ['monster.png','nave.png','enemyLaser.png','laser.png','lo.png'];
+	    var sonidolaser, sonidoinvadershot,sonidodeadSpace, sonidodeadinvader, sonidoendgame;
 	    var preloader;
 		//creando menu inicio
 	    function Game(gameDiv)
@@ -123,6 +125,21 @@
 			imgDisparo.src = 'laser.png';
 			imgDisparoEnemigo = new Image();
 			imgDisparoEnemigo.src = 'enemyLaser.png';
+			sonidolaser= document.createElement('audio');
+			document.body.appendChild(sonidolaser);
+			sonidolaser.setAttribute('src','laser.wav');
+			sonidoinvadershot= document.createElement('audio');
+			document.body.appendChild(sonidoinvadershot);
+			sonidoinvadershot.setAttribute('src','kick_shock.wav');
+			sonidodeadSpace= document.createElement('audio');
+			document.body.appendChild(sonidodeadSpace);
+			sonidodeadSpace.setAttribute('src','explosion.wav');
+			sonidodeadinvader= document.createElement('audio');
+			document.body.appendChild(sonidodeadinvader);
+			sonidodeadinvader.setAttribute('src','explosion2.wav');
+			sonidoendgame= document.createElement('audio');
+			document.body.appendChild(sonidoendgame);
+			sonidoendgame.setAttribute('src','game_over.wav');
 			  }
 		}
 		function dibujarFondo()
@@ -275,8 +292,11 @@
 				
 					enemigo.x += Math.sin(enemigo.contador * Math.PI /170)*1.8;
 
-					if(aleatorio(0,enemigos.length * 40)==3){
+					if(aleatorio(0,enemigos.length * 40)==4){
 						disparosenemigos.push(agregardisparosenemigos(enemigo));
+						//sonidoinvadershot.pause();
+						//sonidoinvadershot.currentTime = 0;	
+						//sonidoinvadershot.play();
 					}
 					
 				}
@@ -312,7 +332,9 @@
 			});
 		}
 	function fire()
-	    {
+	    {   sonidolaser.pause();
+		    sonidolaser.currentTime = 0;	
+			sonidolaser.play();
 			disparos.push({
 				x: nave.x + 5,
 				y: nave.y - 2,
@@ -350,6 +372,9 @@
 	function actualizarestadojuego()
 	  {
 		if(juego.estado == 'jugando' && enemigos.length == 0){
+			sonidoinvadershot.pause();
+			sonidoinvadershot.currentTime = 0;	
+			sonidoinvadershot.play();
 			juego.estado = 'victoria';
 			textorespuesta.titulo = 'ENEMIGOS DESTRUIDOS';
 			textorespuesta.subtitulo = 'PRECIONA INTRO PARA REINICIAR';
@@ -358,6 +383,14 @@
 		if(textorespuesta.contador >= 0){
 			textorespuesta.contador++; 
 		}
+		 if((juego.estado == 'perdido' || juego.estado == 'victoria')&& teclado[13]){
+			sonidoendgame.pause();
+			sonidoendgame.currentTime = 0;	
+			sonidoendgame.play();
+			 juego.estado = 'iniciando';
+			 nave.estado = 'vivo';
+			 textorespuesta.contador = -1;
+		 }
 	  }
 	function hit(a,b)
 	    {
@@ -390,6 +423,9 @@
 				var enemigo = enemigos[j];
 				if(hit(disparo,enemigo))
 				   {
+					sonidodeadSpace.pause();
+					sonidodeadSpace.currentTime = 0;	
+					sonidodeadSpace.play();
 				   enemigo.estado = 'hit';
 				   enemigo.contador = 0;
 				   }

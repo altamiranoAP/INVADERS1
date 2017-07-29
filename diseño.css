@@ -82,8 +82,8 @@
 		  padding: 10px;
 		  background: none;
 		  border: 2px solid #dedede;
-		  border-top-left-radius: 13px;
-		  border-bottom-right-radius: 13px;
+		  border-radius: 13px;
+		  
 		  display:  inline-block;
 		  text-decoration: none;
 		  border-color: #B0C50F;
